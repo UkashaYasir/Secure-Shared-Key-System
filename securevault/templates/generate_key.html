@@ -55,4 +55,144 @@
         </div>
     </div>
 </div>
+</div>
+</div>
+
+<!-- Shatter Animation Overlay -->
+<div id="shatter-overlay"
+    class="d-none position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+    style="background: rgba(0,0,0,0.95); z-index: 10000;">
+    <div class="shatter-container position-relative" style="width: 200px; height: 200px;">
+        <!-- The Main Key -->
+        <i class="fas fa-key text-warning position-absolute top-50 start-50 translate-middle" id="main-key"
+            style="font-size: 8rem; transition: all 0.1s;"></i>
+
+        <!-- The Shards (Hidden initially) -->
+        <i class="fas fa-key text-info position-absolute top-50 start-50 translate-middle shard"
+            style="font-size: 5rem; opacity: 0; transform: rotate(0deg);"></i>
+        <i class="fas fa-key text-danger position-absolute top-50 start-50 translate-middle shard"
+            style="font-size: 5rem; opacity: 0; transform: rotate(120deg);"></i>
+        <i class="fas fa-key text-success position-absolute top-50 start-50 translate-middle shard"
+            style="font-size: 5rem; opacity: 0; transform: rotate(240deg);"></i>
+
+        <h2 class="text-white mt-5 pt-5 text-center position-absolute w-100 fw-bold animate__animated animate__fadeIn"
+            style="bottom: -100px;">Generating Fragments...</h2>
+    </div>
+</div>
+
+<style>
+    .val-shatter-active #main-key {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+
+    .val-shatter-active .shard:nth-child(2) {
+        /* Info key */
+        animation: shard1 1.5s forwards ease-out;
+    }
+
+    .val-shatter-active .shard:nth-child(3) {
+        /* Danger key */
+        animation: shard2 1.5s forwards ease-out;
+    }
+
+    .val-shatter-active .shard:nth-child(4) {
+        /* Success key */
+        animation: shard3 1.5s forwards ease-out;
+    }
+
+    @keyframes shard1 {
+        0% {
+            opacity: 1;
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+
+        100% {
+            opacity: 0;
+            transform: translate(-200%, -200%) rotate(-45deg);
+        }
+    }
+
+    @keyframes shard2 {
+        0% {
+            opacity: 1;
+            transform: translate(-50%, -50%) rotate(120deg);
+        }
+
+        100% {
+            opacity: 0;
+            transform: translate(150%, -50%) rotate(180deg);
+        }
+    }
+
+    @keyframes shard3 {
+        0% {
+            opacity: 1;
+            transform: translate(-50%, -50%) rotate(240deg);
+        }
+
+        100% {
+            opacity: 0;
+            transform: translate(-50%, 200%) rotate(300deg);
+        }
+    }
+</style>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function (e) {
+        if (window.shatterRun) return; // Allow submit if already run
+        e.preventDefault();
+        const form = this;
+
+        // 1. Show Overlay
+        const overlay = document.getElementById('shatter-overlay');
+        overlay.classList.remove('d-none');
+
+        // 2. Play Sound (Custom Shatter SFX)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        // Create a "Crash" noise
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.5);
+
+        // Noise buffer for "shatter" texture
+        const bufferSize = audioCtx.sampleRate * 0.5; // 0.5 sec
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+        const noiseGain = audioCtx.createGain();
+        noiseGain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        noise.connect(noiseGain);
+        noiseGain.connect(audioCtx.destination);
+        noise.start();
+
+        gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+
+
+        // 3. Trigger Animation
+        setTimeout(() => {
+            overlay.classList.add('val-shatter-active');
+        }, 100);
+
+        // 4. Submit after delay
+        setTimeout(() => {
+            window.shatterRun = true;
+            form.submit();
+        }, 2000);
+    });
+</script>
 {% endblock %}
