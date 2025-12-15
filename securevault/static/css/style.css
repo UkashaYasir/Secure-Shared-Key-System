@@ -1,0 +1,83 @@
+/* Global Animated Gradient Background */
+body {
+    background: linear_gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    min-height: 100vh;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Page Specific Overrides (Optional tint overlays) */
+.page-generate body {
+    background: linear_gradient(45deg, #004e92, #000428);
+}
+
+.page-encrypt body {
+    background: linear_gradient(45deg, #11998e, #38ef7d);
+}
+
+.page-reconstruct body {
+    background: linear_gradient(45deg, #f7971e, #ffd200);
+}
+
+.page-decrypt body {
+    background: linear_gradient(45deg, #00c6ff, #0072ff);
+}
+
+.page-logs body {
+    background: linear_gradient(45deg, #2b5876, #4e4376);
+}
+
+/* Glassmorphism Card Style */
+.card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
+}
+
+/* Glass Navbar */
+.navbar {
+    background: rgba(33, 37, 41, 0.85) !important;
+    /* bootstrap dark with opacity */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Text adjustments for legibility on potentially active backgrounds */
+.text-muted {
+    color: #6c757d !important;
+}
+
+/* Hover Elevate Utility */
+.hover-elevate:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Footer Glass */
+footer {
+    background: rgba(248, 249, 250, 0.85) !important;
+    backdrop-filter: blur(5px);
+}

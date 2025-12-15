@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block body_class %}page-encrypt{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-success text-white text-center py-4">
+                <i class="fas fa-file-shield fa-3x mb-2"></i>
+                <h3 class="mb-0">Encrypt File</h3>
+                <small class="text-white-50">Upload, Encrypt & Generate Shares</small>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data">
+
+                    <div class="mb-4">
+                        <label for="file" class="form-label fw-bold">Select File</label>
+                        <input type="file" class="form-control" id="file" name="file" required>
+                    </div>
+
+                    <div class="alert alert-light border mb-4">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-info-circle text-info me-2"></i>
+                            <h6 class="mb-0 fw-bold">Key Management</h6>
+                        </div>
+                        <p class="text-muted small mb-0">A unique AES-256 key will be generated for this file and
+                            immediately split into shares.</p>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="n_shares" class="form-label fw-bold">Shares (N)</label>
+                            <input type="number" class="form-control" id="n_shares" name="n_shares" value="3" min="2"
+                                required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="threshold" class="form-label fw-bold">Threshold (K)</label>
+                            <input type="number" class="form-control" id="threshold" name="threshold" value="2" min="2"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-bold">Password for Shares</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                    </div>
+
+                    <!-- Hidden field shim -->
+                    <input type="hidden" name="key_set_id" value="new">
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-lock me-2"></i>Encrypt & Download
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

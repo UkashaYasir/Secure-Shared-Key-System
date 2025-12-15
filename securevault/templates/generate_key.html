@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block body_class %}page-generate{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white text-center py-4">
+                <i class="fas fa-key fa-3x mb-2"></i>
+                <h3 class="mb-0">Generate Key Set</h3>
+                <small class="text-white-50">Create & Share-Split New AES Keys</small>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-4">
+                        <label for="label" class="form-label fw-bold">Key Label / Description</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                            <input type="text" class="form-control" id="label" name="label" required
+                                placeholder="e.g. Finance Dept Master Key">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="n_shares" class="form-label fw-bold">Total Shares (N)</label>
+                            <input type="number" class="form-control" id="n_shares" name="n_shares" min="2" max="100"
+                                value="5" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="threshold" class="form-label fw-bold">Threshold (K)</label>
+                            <input type="number" class="form-control" id="threshold" name="threshold" min="2" max="100"
+                                value="3" required>
+                            <div class="form-text">Required to reconstruct</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-bold">Share Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="form-text">Protects individual share files.</div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-cogs me-2"></i>Generate & Download
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

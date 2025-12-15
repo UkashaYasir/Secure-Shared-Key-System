@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block body_class %}page-reconstruct{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-warning text-dark text-center py-4">
+                <i class="fas fa-puzzle-piece fa-3x mb-2"></i>
+                <h3 class="mb-0">Reconstruct Key</h3>
+                <small class="text-dark-50">Upload Shares to Restore Session</small>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-muted text-center mb-4">You need upload at least <strong>K</strong> share files to
+                    reconstruct the session key.</p>
+
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-4">
+                        <label for="shares" class="form-label fw-bold">Share Files (JSON)</label>
+                        <input type="file" class="form-control" id="shares" name="shares" multiple required
+                            accept=".json">
+                        <div class="form-text">Select multiple files (hold Ctrl/Cmd) or a single bulk JSON.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-bold">Share Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-warning btn-lg">
+                            <i class="fas fa-hammer me-2"></i>Reconstruct Session
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
