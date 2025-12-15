@@ -26,8 +26,8 @@
                             {{ log.operation_type | format_operation }}
                         </span>
                     </td>
-                    <td>{{ log.user_identifier or '-' }}</td>
-                    <td>{{ log.ip or '-' }}</td>
+                    <td>{{ log.user_identifier or 'Guest' }}</td>
+                    <td>{{ log.ip or 'Unknown' }}</td>
                     <td class="text-muted" style="font-size: 0.9em;">
                         {{ log.details | format_details | safe }}
                     </td>

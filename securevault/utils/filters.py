@@ -51,9 +51,23 @@ def format_details(details):
         # If it's a dict, join key-value pairs
         if isinstance(details, dict):
             parts = []
+            
+            # Prioritize Label if it exists
+            if 'label' in details:
+                parts.append(f"<b>Label:</b> {details['label']}")
+                
             for k, v in details.items():
+                if k == 'label':
+                     continue # Already handled
+                
                 human_key = k.replace('_', ' ').title()
-                parts.append(f"<b>{human_key}:</b> {v}")
+                
+                # Truncate long IDs (UUIDs mostly)
+                val_str = str(v)
+                if len(val_str) > 20 and 'id' in k.lower():
+                     val_str = f"<span title='{val_str}'>{val_str[:8]}...</span>"
+                
+                parts.append(f"<b>{human_key}:</b> {val_str}")
             return ", ".join(parts)
         
         return json.dumps(details, indent=2)

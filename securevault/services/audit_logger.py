@@ -11,8 +11,25 @@ class AuditLogger:
             operation_type (str): The type of operation (e.g., 'KEY_GENERATION').
             user_identifier (str): Identifier for the user (optional).
             details (dict): Additional details about the operation.
-            ip (str): IP address of the requester.
+            ip (str): IP address of the requester. If None, valid Flask request context is used.
         """
+        
+        # Auto-detect IP if in Flask context and not provided
+        if not ip:
+            try:
+                from flask import request
+                if request:
+                     # Check for X-Forwarded-For header (common in proxies/Render)
+                    if request.headers.getlist("X-Forwarded-For"):
+                        ip = request.headers.getlist("X-Forwarded-For")[0]
+                    else:
+                        ip = request.remote_addr
+            except ImportError:
+                pass
+            except RuntimeError:
+                # Outside of request context
+                pass
+
         data = {
             'operation_type': operation_type,
             'user_identifier': user_identifier,

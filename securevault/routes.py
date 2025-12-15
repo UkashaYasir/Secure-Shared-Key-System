@@ -34,17 +34,17 @@ def generate_key():
             key_set = SupabaseModels.create_key_set(n_shares, threshold, label)
             
             # Log
-            audit_logger.AuditLogger.log('KEY_GENERATION', details={'key_set_id': key_set['id']})
+            audit_logger.AuditLogger.log('KEY_GENERATION', user_identifier='Guest', details={'key_set_id': key_set['id'], 'label': label})
             
-            # Prepare shares for download - simplified to a single JSON for demo or zip
+            # Prepare shares for download - simplified
             shares_export = {
                 'key_set_id': key_set['id'],
                 'shares': result['encrypted_shares']
             }
             
-            # In a real app, users download individual shares. Here we give one JSON blo,
-            # which they MUST split up themselves or we zip it.
-            # Returning a JSON file download.
+            # Sanitize label for filename
+            safe_label = "".join([c for c in label if c.isalnum() or c in (' ', '-', '_')]).strip().replace(' ', '_')
+            
             mem = io.BytesIO()
             mem.write(json.dumps(shares_export, indent=2).encode('utf-8'))
             mem.seek(0)
@@ -52,7 +52,7 @@ def generate_key():
             return send_file(
                 mem,
                 as_attachment=True,
-                download_name=f"keyset_{key_set['id']}_shares.json",
+                download_name=f"secure_shares_{safe_label}.json",
                 mimetype='application/json'
             )
 
@@ -125,7 +125,7 @@ def encrypt_file():
                 key_set_id=key_set['id']
             )
             
-            audit_logger.AuditLogger.log('FILE_ENCRYPTED', details={'filename': file.filename, 'key_set_id': key_set['id']})
+            audit_logger.AuditLogger.log('FILE_ENCRYPTED', user_identifier='Guest', details={'filename': file.filename, 'key_set_id': key_set['id']})
             
             # Return shares download
             shares_export = {
@@ -141,7 +141,7 @@ def encrypt_file():
             return send_file(
                 mem,
                 as_attachment=True,
-                download_name=f"file_shares_{file.filename}.json",
+                download_name=f"secure_shares_{file.filename}.json",
                 mimetype='application/json'
             )
             
@@ -242,7 +242,7 @@ def decrypt_file():
                 file_record['auth_tag']
             )
             
-            audit_logger.AuditLogger.log('FILE_DECRYPTED', details={'file_id': file_id})
+            audit_logger.AuditLogger.log('FILE_DECRYPTED', user_identifier='Guest', details={'file_id': file_id})
             
             return send_file(
                 io.BytesIO(plaintext),
