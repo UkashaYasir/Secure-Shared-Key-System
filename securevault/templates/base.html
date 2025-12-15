@@ -66,6 +66,18 @@
                             <i class="fas fa-unlock me-1"></i>Decrypt
                         </a>
                     </li>
+
+                    <!-- Session Timer (Only visible when active) -->
+                    {% if session.get('session_expiry') %}
+                    <li class="nav-item ms-lg-2 d-flex align-items-center">
+                        <div id="session-countdown"
+                            class="badge bg-danger bg-opacity-75 text-white p-2 border border-danger shadow-sm animate__animated animate__pulse animate__infinite"
+                            data-expiry="{{ session.get('session_expiry') }}" title="Time remaining to decrypt files">
+                            <i class="fas fa-hourglass-half me-1"></i> <span id="timer-text">--:--</span>
+                        </div>
+                    </li>
+                    {% endif %}
+
                     <li class="nav-item ms-lg-2">
                         <a class="nav-link btn btn-outline-light btn-sm px-3 text-white"
                             href="{{ url_for('main.logs') }}">
@@ -154,6 +166,48 @@
                 // Show overlay
                 const overlay = document.getElementById('loading-overlay');
                 overlay.classList.remove('d-none');
+            }
+        });
+
+        // Session Countdown Logic
+        document.addEventListener('DOMContentLoaded', function () {
+            const timerEl = document.getElementById('session-countdown');
+            if (timerEl) {
+                const expiryTimestamp = parseFloat(timerEl.getAttribute('data-expiry'));
+                const textEl = document.getElementById('timer-text');
+
+                function updateTimer() {
+                    const now = Date.now() / 1000;
+                    const remaining = expiryTimestamp - now;
+
+                    if (remaining <= 0) {
+                        textEl.textContent = "Expired";
+                        timerEl.classList.remove('bg-danger', 'animate__pulse');
+                        timerEl.classList.add('bg-secondary');
+
+                        // Optional: Redirect if on decrypt page
+                        if (!window.expiryAlertShown) {
+                            window.expiryAlertShown = true;
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Session Expired',
+                                text: 'Your secure session has ended. Please reconstruct the key again.',
+                                confirmButtonText: 'Reconstruct',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = "{{ url_for('main.reconstruct_key') }}";
+                                }
+                            });
+                        }
+                    } else {
+                        const m = Math.floor(remaining / 60);
+                        const s = Math.floor(remaining % 60);
+                        textEl.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                    }
+                }
+
+                updateTimer();
+                setInterval(updateTimer, 1000);
             }
         });
     </script>

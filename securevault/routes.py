@@ -1,7 +1,23 @@
 import json
 import io
+from datetime import datetime, timedelta
 from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, session
 from securevault.services import key_manager, file_crypto, reconstruction_engine, audit_logger
+
+# ... (omitted imports)
+
+# ... (lines 8-193) ...
+
+            session['active_session_id'] = session_id
+            session['active_key_set_id'] = key_set_id
+            
+            # Set Session Expiry for UI Countdown (15 minutes from now)
+            session.permanent = True
+            expiry_time = datetime.now() + timedelta(minutes=15)
+            session['session_expiry'] = expiry_time.timestamp()
+            
+            flash('Key successfully reconstructed! You can now decrypt files.', 'success')
+            return redirect(url_for('main.decrypt_file'))
 from securevault.supabase_client import get_supabase
 from securevault.models_supabase import SupabaseModels
 
@@ -192,6 +208,11 @@ def reconstruct_key():
             
             session['active_session_id'] = session_id
             session['active_key_set_id'] = key_set_id
+            
+            # Set Session Expiry for UI Countdown (15 minutes from now)
+            session.permanent = True
+            expiry_time = datetime.now() + timedelta(minutes=15)
+            session['session_expiry'] = expiry_time.timestamp()
             
             flash('Key successfully reconstructed! You can now decrypt files.', 'success')
             return redirect(url_for('main.decrypt_file'))
