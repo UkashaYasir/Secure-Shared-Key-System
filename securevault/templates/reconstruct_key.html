@@ -17,10 +17,18 @@
 
                 <form method="POST" enctype="multipart/form-data">
                     <div class="mb-4">
-                        <label for="shares" class="form-label fw-bold">Share Files (JSON)</label>
-                        <input type="file" class="form-control" id="shares" name="shares" multiple required
-                            accept=".json">
-                        <div class="form-text">Select multiple files (hold Ctrl/Cmd) or a single bulk JSON.</div>
+                        <label class="form-label fw-bold">Share Files (JSON)</label>
+                        <div class="drop-zone" id="drop-zone-reconstruct">
+                            <span class="drop-zone__prompt">
+                                <i class="fas fa-cloud-upload-alt fa-2x mb-2 d-block text-warning"></i>
+                                Drop Share JSONs here
+                                <br><small class="fw-normal">or click to select</small>
+                            </span>
+                            <input type="file" name="shares" class="drop-zone__input" id="shares" multiple required
+                                accept=".json">
+                        </div>
+                        <div class="form-text mt-2 text-white-50">Select multiple files (hold Ctrl/Cmd) or a single bulk
+                            JSON.</div>
                     </div>
 
                     <div class="mb-4">
@@ -41,4 +49,50 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+        const dropZoneElement = inputElement.closest(".drop-zone");
+
+        dropZoneElement.addEventListener("click", (e) => {
+            inputElement.click();
+        });
+
+        inputElement.addEventListener("change", (e) => {
+            if (inputElement.files.length) {
+                updateThumbnail(dropZoneElement, inputElement.files);
+            }
+        });
+
+        dropZoneElement.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropZoneElement.classList.add("drop-zone--over");
+        });
+
+        ["dragleave", "dragend"].forEach((type) => {
+            dropZoneElement.addEventListener(type, (e) => {
+                dropZoneElement.classList.remove("drop-zone--over");
+            });
+        });
+
+        dropZoneElement.addEventListener("drop", (e) => {
+            e.preventDefault();
+
+            if (e.dataTransfer.files.length) {
+                inputElement.files = e.dataTransfer.files;
+                updateThumbnail(dropZoneElement, e.dataTransfer.files);
+            }
+
+            dropZoneElement.classList.remove("drop-zone--over");
+        });
+    });
+
+    function updateThumbnail(dropZoneElement, files) {
+        let promptElement = dropZoneElement.querySelector(".drop-zone__prompt");
+        if (promptElement) {
+            promptElement.innerHTML = `<i class="fas fa-check-circle fa-2x mb-2 d-block text-white"></i>${files.length} File(s) Selected`;
+            promptElement.style.color = "#fff";
+        }
+    }
+</script>
 {% endblock %}

@@ -14,9 +14,18 @@
             <div class="card-body p-4">
                 <form method="POST" enctype="multipart/form-data">
 
+                    <!-- Drag & Drop Zone -->
                     <div class="mb-4">
-                        <label for="file" class="form-label fw-bold">Select File</label>
-                        <input type="file" class="form-control" id="file" name="file" required>
+                        <label class="form-label fw-bold">Select File</label>
+                        <div class="drop-zone" id="drop-zone-encrypt">
+                            <span class="drop-zone__prompt">
+                                <i class="fas fa-cloud-upload-alt fa-2x mb-2 d-block text-success"></i>
+                                Drop file here or click to upload
+                            </span>
+                            <input type="file" name="file" class="drop-zone__input" id="file" required>
+                        </div>
+                        <div id="file-name-display"
+                            class="mt-2 text-center small text-info fw-bold animate__animated animate__fadeIn"></div>
                     </div>
 
                     <div class="alert alert-light border mb-4">
@@ -62,4 +71,54 @@
         </div>
     </div>
 </div>
-{% endblock %}
+
+<script>
+    document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+        const dropZoneElement = inputElement.closest(".drop-zone");
+
+        dropZoneElement.addEventListener("click", (e) => {
+            inputElement.click();
+        });
+
+        inputElement.addEventListener("change", (e) => {
+            if (inputElement.files.length) {
+                updateThumbnail(dropZoneElement, inputElement.files[0]);
+            }
+        });
+
+        dropZoneElement.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropZoneElement.classList.add("drop-zone--over");
+        });
+
+        ["dragleave", "dragend"].forEach((type) => {
+            dropZoneElement.addEventListener(type, (e) => {
+                dropZoneElement.classList.remove("drop-zone--over");
+            });
+        });
+
+        dropZoneElement.addEventListener("drop", (e) => {
+            e.preventDefault();
+
+            if (e.dataTransfer.files.length) {
+                inputElement.files = e.dataTransfer.files;
+                updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+            }
+
+            dropZoneElement.classList.remove("drop-zone--over");
+        });
+    });
+
+    function updateThumbnail(dropZoneElement, file) {
+        // Update the prompt text instead of thumbnail for generic files
+        let promptElement = dropZoneElement.querySelector(".drop-zone__prompt");
+        if (promptElement) {
+            promptElement.innerHTML = `<i class="fas fa-check-circle fa-2x mb-2 d-block text-white"></i>Selected: ${file.name}`;
+            promptElement.style.color = "#fff";
+        }
+
+        // Also update separate display if exists
+        const display = document.getElementById('file-name-display');
+        if (display) display.textContent = `Selected: ${file.name}`;
+    }
+</script>
