@@ -8,16 +8,7 @@ from securevault.services import key_manager, file_crypto, reconstruction_engine
 
 # ... (lines 8-193) ...
 
-            session['active_session_id'] = session_id
-            session['active_key_set_id'] = key_set_id
-            
-            # Set Session Expiry for UI Countdown (15 minutes from now)
-            session.permanent = True
-            expiry_time = datetime.now() + timedelta(minutes=15)
-            session['session_expiry'] = expiry_time.timestamp()
-            
-            flash('Key successfully reconstructed! You can now decrypt files.', 'success')
-            return redirect(url_for('main.decrypt_file'))
+
 from securevault.supabase_client import get_supabase
 from securevault.models_supabase import SupabaseModels
 
