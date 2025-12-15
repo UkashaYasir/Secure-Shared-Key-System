@@ -52,22 +52,33 @@ def format_details(details):
         if isinstance(details, dict):
             parts = []
             
-            # Prioritize Label if it exists
+            # Determine what to hide based on available friendly names
+            keys_to_hide = set()
             if 'label' in details:
-                parts.append(f"<b>Label:</b> {details['label']}")
+                keys_to_hide.add('key_set_id')
+            if 'filename' in details or 'original_filename' in details:
+                keys_to_hide.add('key_set_id')
+                keys_to_hide.add('file_id')
+
+            # Pre-sort to put Label/Filename first
+            # Custom order: Label, Filename, Original Filename, then others
+            priority_keys = ['label', 'filename', 'original_filename']
+            sorted_keys = sorted(details.keys(), key=lambda k: priority_keys.index(k) if k in priority_keys else 99)
+
+            for k in sorted_keys:
+                if k in keys_to_hide:
+                    continue
                 
-            for k, v in details.items():
-                if k == 'label':
-                     continue # Already handled
-                
+                v = details[k]
                 human_key = k.replace('_', ' ').title()
                 
-                # Truncate long IDs (UUIDs mostly)
+                # Truncate long IDs (UUIDs mostly) that are NOT hidden
                 val_str = str(v)
                 if len(val_str) > 20 and 'id' in k.lower():
                      val_str = f"<span title='{val_str}'>{val_str[:8]}...</span>"
                 
                 parts.append(f"<b>{human_key}:</b> {val_str}")
+                
             return ", ".join(parts)
         
         return json.dumps(details, indent=2)
