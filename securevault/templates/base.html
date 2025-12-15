@@ -22,6 +22,20 @@
 
 <body class="d-flex flex-column min-vh-100 {% block body_class %}{% endblock %}">
     <div class="animated-bg"></div>
+    <div id="particles-js" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay"
+        class="d-none position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+        style="background: rgba(15, 23, 42, 0.9); z-index: 9999; backdrop-filter: blur(5px);">
+        <div class="text-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+            <h4 class="mt-3 text-white fw-bold animate__animated animate__pulse animate__infinite">Processing Secure
+                Data...</h4>
+            <p class="text-white-50 small">Please wait while we perform cryptographic operations.</p>
+        </div>
+    </div>
+
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ url_for('main.index') }}">
@@ -64,14 +78,36 @@
     </nav>
 
     <div class="container mt-5 flex-grow-1">
+        <!-- SweetAlert2 Message Handling -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        {% endfor %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+
+                {% for category, message in messages %}
+                // Map Flask categories to SweetAlert types
+                var type = '{{ category }}';
+                if (type === 'danger') type = 'error';
+                if (type === 'message') type = 'info';
+
+                Toast.fire({
+                    icon: type,
+                    title: '{{ message }}'
+                });
+                {% endfor %}
+            });
+        </script>
         {% endif %}
         {% endwith %}
 
@@ -86,6 +122,41 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Initialize Particles
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#ffffff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.2, "random": false },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.1, "width": 1 },
+                "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out" }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } },
+                "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 1 } } }
+            },
+            "retina_detect": true
+        });
+
+        // Global Loading Overlay
+        document.addEventListener('submit', function (e) {
+            const form = e.target;
+            if (form.closest('form')) {
+                // Show overlay
+                const overlay = document.getElementById('loading-overlay');
+                overlay.classList.remove('d-none');
+            }
+        });
+    </script>
 </body>
 
 </html>
