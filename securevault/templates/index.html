@@ -3,23 +3,55 @@
 {% block content %}
 <div class="text-center py-5">
     <div class="mb-5">
-        <i class="fas fa-shield-halved fa-4x text-primary mb-3"></i>
-        <h1 class="display-3 fw-bold">SecureVault</h1>
-        <p class="lead text-muted mb-4">
-            Enterprise-grade file protection using <strong>Shamir's Secret Sharing</strong> & <strong>AES-256</strong>.
-            <br>Securely split your encryption keys and distribute them with confidence.
+        <div class="d-inline-block p-4 rounded-circle bg-white bg-opacity-10 mb-3 backdrop-blur shadow-lg">
+            <i class="fas fa-shield-halved fa-4x text-white"></i>
+        </div>
+        <h1 class="display-3 fw-bold text-white mb-3">SecureVault</h1>
+        <p class="lead text-white-50 mb-4" style="text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <strong>Share Secrets safely.</strong> <br>
+            Split your keys into digital puzzle pieces. No single person holds the power.
         </p>
         <div class="d-flex justify-content-center gap-3">
-            <a href="{{ url_for('main.generate_key') }}" class="btn btn-primary btn-lg px-4">
+            <a href="{{ url_for('main.generate_key') }}" class="btn btn-light btn-lg px-4 fw-bold shadow-sm">
                 <i class="fas fa-plus-circle me-2"></i>New Key Set
             </a>
-            <a href="{{ url_for('main.encrypt_file') }}" class="btn btn-outline-secondary btn-lg px-4">
+            <a href="{{ url_for('main.encrypt_file') }}"
+                class="btn btn-outline-light btn-lg px-4 fw-bold backdrop-blur">
                 <i class="fas fa-file-shield me-2"></i>Encrypt File
             </a>
         </div>
     </div>
 
-    <hr class="my-5 w-50 mx-auto text-muted">
+    <!-- How It Works Section (New) -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg" style="background: rgba(255,255,255,0.95);">
+                <div class="card-body p-4 p-md-5">
+                    <h3 class="fw-bold mb-4">How It Works</h3>
+                    <div class="row g-4 text-center">
+                        <div class="col-md-4">
+                            <i class="fas fa-lock fa-2x text-primary mb-3"></i>
+                            <h5 class="fw-bold">1. Lock</h5>
+                            <p class="small text-muted">Encrypt your file. The key is created and effectively destroyed
+                                immediately.</p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="fas fa-scissors fa-2x text-primary mb-3"></i>
+                            <h5 class="fw-bold">2. Split</h5>
+                            <p class="small text-muted">The key is split into "shares" (puzzle pieces) distributed to
+                                different people.</p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="fas fa-users fa-2x text-primary mb-3"></i>
+                            <h5 class="fw-bold">3. Combine</h5>
+                            <p class="small text-muted">A group must come together with their shares to unlock the file
+                                again.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row g-4 justify-content-center">
         <!-- Feature 1 -->
@@ -30,10 +62,10 @@
                         <i class="fas fa-key fa-2x text-primary"></i>
                     </div>
                     <h5 class="card-title fw-bold">Generate Keys</h5>
-                    <p class="card-text text-muted small">Create robust AES-256 keys and split them into multiple shares
-                        using Shamir's Secret Sharing.</p>
+                    <p class="card-text text-muted small">Create 32-byte AES keys and split them using Shamir's Secret
+                        Sharing.</p>
                     <a href="{{ url_for('main.generate_key') }}"
-                        class="btn btn-sm btn-link text-decoration-none stretched-link">Get Started &rarr;</a>
+                        class="btn btn-sm btn-link text-decoration-none stretched-link">Try Demo &rarr;</a>
                 </div>
             </div>
         </div>
@@ -46,8 +78,8 @@
                         <i class="fas fa-file-lock fa-2x text-success"></i>
                     </div>
                     <h5 class="card-title fw-bold">Secure Files</h5>
-                    <p class="card-text text-muted small">Encrypt your sensitive documents. The key is never stored
-                        whole—it's split immediately.</p>
+                    <p class="card-text text-muted small">Encrypt documents. No key is stored—only the scattered shares.
+                    </p>
                     <a href="{{ url_for('main.encrypt_file') }}"
                         class="btn btn-sm btn-link text-decoration-none stretched-link text-success">Encrypt Now
                         &rarr;</a>
@@ -63,8 +95,8 @@
                         <i class="fas fa-puzzle-piece fa-2x text-warning"></i>
                     </div>
                     <h5 class="card-title fw-bold">Reconstruct</h5>
-                    <p class="card-text text-muted small">Combine a threshold of shares to temporarily reconstruct the
-                        key and decrypt your files.</p>
+                    <p class="card-text text-muted small">Combine shares to temporarily restore the key and access
+                        files.</p>
                     <a href="{{ url_for('main.reconstruct_key') }}"
                         class="btn btn-sm btn-link text-decoration-none stretched-link text-warning">Recover Key
                         &rarr;</a>
@@ -80,8 +112,8 @@
                         <i class="fas fa-list-check fa-2x text-secondary"></i>
                     </div>
                     <h5 class="card-title fw-bold">Audit Logs</h5>
-                    <p class="card-text text-muted small">Full transparency. Track every creation, split, encryption,
-                        and reconstruction event.</p>
+                    <p class="card-text text-muted small">Full transparency. Track every event for security auditing.
+                    </p>
                     <a href="{{ url_for('main.logs') }}"
                         class="btn btn-sm btn-link text-decoration-none stretched-link text-secondary">View Logs
                         &rarr;</a>
