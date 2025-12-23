@@ -278,7 +278,14 @@ def decrypt_file():
 @bp.route('/logs')
 def logs():
     # Fetch logs
-    # Supabase select
-    data = get_supabase().table('audit_logs').select('*').order('timestamp', desc=True).limit(50).execute()
-    logs = data.data
+    # Fetch logs
+    logs = []
+    try:
+        # Supabase select
+        response = get_supabase().table('audit_logs').select('*').order('timestamp', desc=True).limit(50).execute()
+        logs = response.data if response.data else []
+    except Exception as e:
+        print(f"Error fetching logs: {e}")
+        flash("Unable to connect to audit log service.", "warning")
+        
     return render_template('logs.html', logs=logs)
