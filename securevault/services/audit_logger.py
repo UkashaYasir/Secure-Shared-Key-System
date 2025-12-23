@@ -44,4 +44,6 @@ class AuditLogger:
             # We don't want audit logging failure to crash the main app, 
             # but in a high-security context, we might want to alert.
             # For now, print to stderr.
+            import traceback
             print(f"AUDIT LOGGING FAILED: {str(e)}")
+            traceback.print_exc()

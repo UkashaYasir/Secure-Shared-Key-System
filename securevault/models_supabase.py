@@ -42,7 +42,7 @@ class SupabaseModels:
     @staticmethod
     def list_files_for_keyset(key_set_id: str) -> list:
         response = get_supabase().table('files').select('*').eq('key_set_id', key_set_id).execute()
-        return response.data
+        return response.data if response.data else []
 
     @staticmethod
     def create_reconstruction_session(key_set_id: str, expires_at: str) -> dict:

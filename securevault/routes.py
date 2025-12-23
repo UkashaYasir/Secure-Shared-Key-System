@@ -35,6 +35,9 @@ def generate_key():
             
             # Store KeySet in DB
             key_set = SupabaseModels.create_key_set(n_shares, threshold, label)
+            if not key_set:
+                 flash('Database Error: Failed to create Key Set record.', 'danger')
+                 return redirect(url_for('main.generate_key'))
             
             # Log
             audit_logger.AuditLogger.log('KEY_GENERATION', user_identifier='Guest', details={'key_set_id': key_set['id'], 'label': label})
@@ -110,12 +113,20 @@ def encrypt_file():
             # Create a "KeySet" record to track this specific file's key strategy
             key_set = SupabaseModels.create_key_set(n_shares, threshold, f"Key for {file.filename}")
             
+            if not key_set:
+                raise Exception("Failed to create Key Set record in database.")
+
+            
             # Upload encrypted file to Supabase Storage
             # Note: Supabase Storage limits might apply.
             storage_path = f"encrypted/{key_set['id']}/{file.filename}.enc"
+            
+            # Wrap bytes in BytesIO for reliable upload
+            file_stream = io.BytesIO(enc_result['ciphertext'])
+            
             get_supabase().storage.from_("encrypted-files").upload(
                 path=storage_path,
-                file=enc_result['ciphertext'],
+                file=file_stream,
                 file_options={"content-type": "application/octet-stream"}
             )
             
